@@ -3,132 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile POS & Repair Management System</title>
-    <!-- Tailwind CSS CDN for styling -->
+    <title>SmartMobile & TV POS & Repair Management System</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-slate-100 font-sans antialiased flex h-screen overflow-hidden">
 
-    <!-- Header / Navbar -->
-    <header class="bg-blue-600 text-white p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">📱 Mobile POS & Repair System</h1>
-            <span class="text-sm bg-blue-700 px-3 py-1 rounded">Offline/Online Ready</span>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <!-- Section 1: Repair Job Card Registration -->
-        <section class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">🛠️ Add Repair Job Card</h2>
-            <form id="repairForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Customer Name</label>
-                    <input type="text" id="custName" required class="w-full mt-1 p-2 border rounded focus:ring focus:ring-blue-300">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Phone Model</label>
-                    <input type="text" id="phoneModel" required class="w-full mt-1 p-2 border rounded focus:ring focus:ring-blue-300">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Issue / Problem Description</label>
-                    <textarea id="issue" required class="w-full mt-1 p-2 border rounded focus:ring focus:ring-blue-300" rows="2"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Estimated Cost (Rs.)</label>
-                    <input type="number" id="cost" required class="w-full mt-1 p-2 border rounded focus:ring focus:ring-blue-300">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-semibold">Save Job Card</button>
-            </form>
-        </section>
-
-        <!-- Section 2: Active Repair Jobs List -->
-        <section class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">📋 Active Job Cards</h2>
-            <div class="overflow-x-auto max-h-96 overflow-y-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-700 text-sm">
-                            <th class="p-2 border">Customer</th>
-                            <th class="p-2 border">Model</th>
-                            <th class="p-2 border">Issue</th>
-                            <th class="p-2 border">Cost</th>
-                            <th class="p-2 border">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="jobTableBody" class="text-sm text-gray-600">
-                        <!-- Dynamic Jobs will load here -->
-                    </tbody>
-                </table>
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shadow-xl">
+        <div>
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800">
+                <i class="fa-solid fa-mobile-screen-button text-2xl text-indigo-400"></i>
+                <span class="text-white font-bold text-lg tracking-wide">SmartPOS Pro</span>
             </div>
-        </section>
+            <nav class="p-4 space-y-2">
+                <button onclick="switchPage('dashboard')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition nav-btn bg-indigo-600 text-white" id="nav-dashboard">
+                    <i class="fa-solid fa-chart-pie w-5"></i><span>Dashboard</span>
+                </button>
+                <button onclick="switchPage('pos')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition nav-btn hover:bg-slate-800 hover:text-white" id="nav-pos">
+                    <i class="fa-solid fa-cash-register w-5"></i><span>POS Billing</span>
+                </button>
+                <button onclick="switchPage('repairs')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition nav-btn hover:bg-slate-800 hover:text-white" id="nav-repairs">
+                    <i class="fa-solid fa-screwdriver-wrench w-5"></i><span>Repair Jobs</span>
+                </button>
+                <button onclick="switchPage('inventory')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition nav-btn hover:bg-slate-800 hover:text-white" id="nav-inventory">
+                    <i class="fa-solid fa-boxes-stacked w-5"></i><span>Inventory Stock</span>
+                </button>
+                <button onclick="switchPage('reports')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition nav-btn hover:bg-slate-800 hover:text-white" id="nav-reports">
+                    <i class="fa-solid fa-file-invoice-dollar w-5"></i><span>Reports & Profit</span>
+                </button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+            Mobile & TV Repair POS v2.0
+        </div>
+    </aside>
 
-    </main>
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <!-- Top Header -->
+        <header class="bg-white shadow-sm border-b px-8 py-4 flex justify-between items-center z-10">
+            <h2 id="page-title" class="text-xl font-bold text-slate-800">Dashboard Overview</h2>
+            <div class="flex items-center space-x-4">
+                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> System Online</span>
+            </div>
+        </header>
 
-    <!-- JavaScript for Handling API -->
+        <!-- Dynamic Pages Container -->
+        <main class="flex-1 overflow-y-auto p-8">
+
+            <!-- PAGE 1: DASHBOARD -->
+            <div id="page-dashboard" class="page-content space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-slate-500 text-sm font-medium">Total Sales Revenue</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-2" id="dash-sales">Rs. 0.00</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-slate-500 text-sm font-medium">Repair Earnings</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-2" id="dash-repairs">Rs. 0.00</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-slate-500 text-sm font-medium">Total Shop Expenses</p>
+                        <h3 class="text-2xl font-bold text-rose-600 mt-2" id="dash-expenses">Rs. 0.00</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-slate-500 text-sm font-medium">Net Profit</p>
+                        <h3 class="text-2xl font-bold text-indigo-600 mt-2" id="dash-profit">Rs. 0.00</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: POS BILLING -->
+            <div id="page-pos" class="page-content hidden grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-[calc(100vh-160px)]">
+                    <div class="mb-4">
+                        <input type="text" id="search-product" placeholder="Scan barcode or search items..." onkeyup="filterProducts()" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto pr-2 flex-1"></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-[calc(100vh-160px)]">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Current Bill Cart</h3>
+                        <div id="cart-items" class="divide-y divide-slate-100 overflow-y-auto max-h-[calc(100vh-320px)] mb-4">
+                            <p class="text-slate-400 text-sm text-center py-8">Cart is empty</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between text-lg font-bold mb-4">
+                            <span>Total:</span>
+                            <span id="cart-total" class="text-indigo-600">Rs. 0.00</span>
+                        </div>
+                        <button onclick="completeSale()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition">Complete Checkout</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: REPAIR JOBS -->
+            <div id="page-repairs" class="page-content hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">New Repair Job Card</h3>
+                    <form id="repair-form" onsubmit="addRepairJob(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Customer Name</label>
+                            <input type="text" id="rep-name" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                            <input type="text" id="rep-phone" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Device</label>
+                                <select id="rep-type" class="w-full px-3 py-2 border rounded-lg">
+                                    <option value="Mobile Phone">Mobile Phone</option>
+                                    <option value="Smart TV">Smart TV</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Model</label>
+                                <input type="text" id="rep-model" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Issue Description</label>
+                            <textarea id="rep-issue" rows="2" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Estimated Charge</label>
+                                <input type="number" id="rep-cost" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Advance Paid</label>
+                                <input type="number" id="rep-advance" value="0" class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">Save Job Card</button>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Active Repair Queue</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b text-slate-600 text-sm">
+                                    <th class="p-3">Customer</th>
+                                    <th class="p-3">Device / Issue</th>
+                                    <th class="p-3">Charges / Adv</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repair-table-body" class="divide-y text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 4: INVENTORY -->
+            <div id="page-inventory" class="page-content hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Add Stock Item</h3>
+                    <form id="product-form" onsubmit="addProduct(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Item Name</label>
+                            <input type="text" id="prod-name" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                            <input type="text" id="prod-category" value="Accessories" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Buy Price</label>
+                                <input type="number" id="prod-buy" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Sell Price</label>
+                                <input type="number" id="prod-price" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Stock Quantity</label>
+                            <input type="number" id="prod-stock" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">Save Item</button>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Inventory Stock List</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b text-slate-600 text-sm">
+                                    <th class="p-3">Item</th>
+                                    <th class="p-3">Buy / Sell</th>
+                                    <th class="p-3">Stock Available</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="divide-y text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 5: REPORTS & EXPENSES -->
+            <div id="page-reports" class="page-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Record Shop Expense</h3>
+                    <form id="expense-form" onsubmit="addExpense(event)" class="flex gap-4">
+                        <input type="text" id="exp-title" placeholder="Expense Reason (e.g. Electricity, Rent)" required class="flex-1 px-3 py-2 border rounded-lg">
+                        <input type="number" id="exp-amount" placeholder="Amount (Rs.)" required class="w-48 px-3 py-2 border rounded-lg">
+                        <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2 rounded-lg transition">Add Expense</button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Frontend Script Logic -->
     <script>
-        const API_URL = 'http://localhost:5000/api';
+        let appData = { products: [], sales: [], repairs: [], expenses: [] };
+        let cart = [];
 
-        // Fetch Jobs on Load
-        async function loadJobs() {
+        async function fetchData() {
             try {
-                const response = await fetch(`${API_URL}/jobs`);
-                const jobs = await response.json();
-                const tbody = document.getElementById('jobTableBody');
-                tbody.innerHTML = '';
-                
-                if(jobs.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No job cards found.</td></tr>`;
-                    return;
-                }
-
-                jobs.forEach(job => {
-                    tbody.innerHTML += `
-                        <tr class="border-b">
-                            <td class="p-2 border">${job.custName}</td>
-                            <td class="p-2 border">${job.phoneModel}</td>
-                            <td class="p-2 border">${job.issue}</td>
-                            <td class="p-2 border">Rs. ${job.cost}</td>
-                            <td class="p-2 border text-orange-600 font-semibold">${job.status}</td>
-                        </tr>
-                    `;
-                });
+                const res = await fetch('/api/data');
+                appData = await res.json();
+                renderDashboard();
+                renderPOSProducts();
+                renderInventory();
+                renderRepairs();
             } catch (err) {
-                console.error('Error loading jobs:', err);
+                console.error("Fetch error:", err);
             }
         }
 
-        // Handle Job Form Submit
-        document.getElementById('repairForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newJob = {
-                custName: document.getElementById('custName').value,
-                phoneModel: document.getElementById('phoneModel').value,
-                issue: document.getElementById('issue').value,
-                cost: document.getElementById('cost').value
-            };
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-indigo-600', 'text-white');
+                el.classList.add('hover:bg-slate-800', 'hover:text-white');
+            });
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            const btn = document.getElementById('nav-' + pageId);
+            btn.classList.add('bg-indigo-600', 'text-white');
+            btn.classList.remove('hover:bg-slate-800');
 
-            try {
-                const response = await fetch(`${API_URL}/jobs`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newJob)
-                });
-                const result = await response.json();
-                if(result.success) {
-                    alert('Job Card Saved Successfully!');
-                    document.getElementById('repairForm').reset();
-                    loadJobs();
-                }
-            } catch (err) {
-                alert('Error saving job card. Make sure backend is running.');
+            const titles = { dashboard: 'Dashboard Overview', pos: 'POS Billing Counter', repairs: 'Mobile & TV Repair Jobs', inventory: 'Inventory Stock Management', reports: 'Reports & Financial Profit' };
+            document.getElementById('page-title').innerText = titles[pageId];
+        }
+
+        function renderDashboard() {
+            const totalSales = appData.sales.reduce((sum, s) => sum + s.total, 0);
+            const totalRepairs = appData.repairs.reduce((sum, r) => sum + (r.status === 'Completed' ? r.estimatedCost : parseFloat(r.advance || 0)), 0);
+            const totalExpenses = appData.expenses.reduce((sum, e) => sum + e.amount, 0);
+            const salesProfit = appData.sales.reduce((sum, s) => sum + (s.profit || 0), 0);
+            const netProfit = salesProfit + totalRepairs - totalExpenses;
+
+            document.getElementById('dash-sales').innerText = 'Rs. ' + totalSales.toLocaleString();
+            document.getElementById('dash-repairs').innerText = 'Rs. ' + totalRepairs.toLocaleString();
+            document.getElementById('dash-expenses').innerText = 'Rs. ' + totalExpenses.toLocaleString();
+            document.getElementById('dash-profit').innerText = 'Rs. ' + netProfit.toLocaleString();
+        }
+
+        function renderPOSProducts() {
+            const grid = document.getElementById('pos-product-grid');
+            grid.innerHTML = appData.products.map(p => `
+                <div onclick="addToCart(${p.id})" class="p-4 border rounded-lg hover:border-indigo-500 cursor-pointer bg-slate-50 transition flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm">${p.name}</h4>
+                        <p class="text-xs text-slate-500 mt-1">Stock: ${p.stock}</p>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-indigo-600 font-bold text-sm">Rs. ${p.price}</span>
+                        <button class="bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('search-product').value.toLowerCase();
+            const filtered = appData.products.filter(p => p.name.toLowerCase().includes(query));
+            document.getElementById('pos-product-grid').innerHTML = filtered.map(p => `
+                <div onclick="addToCart(${p.id})" class="p-4 border rounded-lg hover:border-indigo-500 cursor-pointer bg-slate-50 transition flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm">${p.name}</h4>
+                        <p class="text-xs text-slate-500 mt-1">Stock: ${p.stock}</p>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-indigo-600 font-bold text-sm">Rs. ${p.price}</span>
+                        <button class="bg-indigo-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(productId) {
+            const product = appData.products.find(p => p.id === productId);
+            if (!product || product.stock <= 0) return alert("Item out of stock!");
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                if (existing.qty < product.stock) existing.qty++;
+                else alert("Max stock reached!");
+            } else {
+                cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
             }
-        });
+            renderCart();
+        }
 
-        // Load jobs when page loads
-        loadJobs();
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-sm text-center py-8">Cart is empty</p>';
+                document.getElementById('cart-total').innerText = 'Rs. 0.00';
+                return;
+            }
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += item.price * item.qty;
+                return `
+                    <div class="py-2 flex justify-between items-center text-sm">
+                        <div>
+                            <p class="font-bold text-slate-800">${item.name}</p>
+                            <p class="text-xs text-slate-500">Rs. ${item.price} × ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold">Rs. ${item.price * item.qty}</span>
+                            <button onclick="removeFromCart(${item.id})" class="text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cart-total').innerText = 'Rs. ' + total.toFixed(2);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            renderCart();
+        }
+
+        async function completeSale() {
+            if (cart.length === 0) return alert("Cart empty!");
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const res = await fetch('/api/sales', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: cart, total, paymentMethod: 'Cash' })
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert("Sale Completed!");
+                cart = [];
+                renderCart();
+                fetchData();
+            }
+        }
+
+        async function addProduct(e) {
+            e.preventDefault();
+            const prod = {
+                name: document.getElementById('prod-name').value,
+                category: document.getElementById('prod-category').value,
+                buyPrice: document.getElementById('prod-buy').value,
+                price: document.getElementById('prod-price').value,
+                stock: document.getElementById('prod-stock').value
+            };
+            await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(prod) });
+            document.getElementById('product-form').reset();
+            fetchData();
+        }
+
+        function renderInventory() {
+            document.getElementById('inventory-table-body').innerHTML = appData.products.map(p => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-800">${p.name}<br><span class="text-xs text-slate-500 font-normal">${p.category}</span></td>
+                    <td class="p-3 text-slate-600">Buy: Rs. ${p.buyPrice}<br>Sell: Rs. ${p.price}</td>
+                    <td class="p-3"><span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-bold">${p.stock} Units</span></td>
+                </tr>
+            `).join('');
+        }
+
+        async function addRepairJob(e) {
+            e.preventDefault();
+            const job = {
+                custName: document.getElementById('rep-name').value,
+                phoneNo: document.getElementById('rep-phone').value,
+                deviceType: document.getElementById('rep-type').value,
+                model: document.getElementById('rep-model').value,
+                issue: document.getElementById('rep-issue').value,
+                estimatedCost: document.getElementById('rep-cost').value,
+                advance: document.getElementById('rep-advance').value
+            };
+            await fetch('/api/repairs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(job) });
+            document.getElementById('repair-form').reset();
+            fetchData();
+        }
+
+        async function updateStatus(id, status) {
+            await fetch('/api/repairs/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+            fetchData();
+        }
+
+        function renderRepairs() {
+            document.getElementById('repair-table-body').innerHTML = appData.repairs.map(r => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3"><p class="font-bold text-slate-800">${r.custName}</p><p class="text-xs text-slate-500">${r.phoneNo}</p></td>
+                    <td class="p-3"><p class="font-medium text-indigo-900">${r.deviceType} - ${r.model}</p><p class="text-xs text-slate-500">${r.issue}</p></td>
+                    <td class="p-3"><p class="font-bold">Rs. ${r.estimatedCost}</p><p class="text-xs text-emerald-600">Adv: Rs. ${r.advance}</p></td>
+                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${r.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${r.status}</span></td>
+                    <td class="p-3">
+                        <select onchange="updateStatus(${r.id}, this.value)" class="text-xs border rounded p-1">
+                            <option value="Pending" ${r.status==='Pending'?'selected':''}>Pending</option>
+                            <option value="Repairing" ${r.status==='Repairing'?'selected':''}>Repairing</option>
+                            <option value="Ready" ${r.status==='Ready'?'selected':''}>Ready</option>
+                            <option value="Completed" ${r.status==='Completed'?'selected':''}>Completed</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addExpense(e) {
+            e.preventDefault();
+            const exp = { title: document.getElementById('exp-title').value, amount: document.getElementById('exp-amount').value };
+            await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(exp) });
+            document.getElementById('expense-form').reset();
+            fetchData();
+            alert("Expense Saved!");
+        }
+
+        fetchData();
     </script>
 </body>
 </html>
